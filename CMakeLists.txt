@@ -6,11 +6,12 @@ cmake_minimum_required(VERSION 2.8)
 
 include(${CMAKE_SOURCE_DIR}/BunsanWeb.cmake)
 
+bunsan_use_bunsan(common)
 bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 bunsan_use(cppcms)
 
 bunsan_add_shared_library(${PROJECT_NAME}
-    src/stub.cpp
+    src/mime_file.cpp
 )
 
 bunsan_install_headers()
