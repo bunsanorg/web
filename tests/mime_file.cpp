@@ -39,6 +39,21 @@ BOOST_AUTO_TEST_CASE(put_all)
     BOOST_CHECK_EQUAL(m.mime_by_extension("ext4"), "mime2");
 }
 
+BOOST_AUTO_TEST_CASE(mime_file_extension_conflict_error)
+{
+    bw::mime_file m;
+    m.put("mime", "ext");
+    BOOST_CHECK_EXCEPTION(m.put("mime", "ext"), bw::mime_file_extension_conflict_error,
+                          [](const bw::mime_file_extension_conflict_error &e)
+                          {
+                              BOOST_REQUIRE(e.get<bw::mime_file_extension_conflict_error::mime>());
+                              BOOST_CHECK_EQUAL(*e.get<bw::mime_file_extension_conflict_error::mime>(), "mime");
+                              BOOST_REQUIRE(e.get<bw::mime_file_extension_conflict_error::extension>());
+                              BOOST_CHECK_EQUAL(*e.get<bw::mime_file_extension_conflict_error::extension>(), "ext");
+                              return true;
+                          });
+}
+
 BOOST_AUTO_TEST_CASE(load)
 {
     std::istringstream sin(R"EOF(
