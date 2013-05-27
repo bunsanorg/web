@@ -78,4 +78,17 @@ BOOST_AUTO_TEST_CASE(load)
     BOOST_CHECK_EQUAL(m.mime_by_extension("txt"), "text/plain");
 }
 
+BOOST_AUTO_TEST_CASE(load_override)
+{
+    std::istringstream sin(R"EOF(
+        mime1 ext1 ext2
+        mime2 ext2 ext3
+)EOF");
+    bw::mime_file m;
+    m.load(sin);
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime2");
+}
+
 BOOST_AUTO_TEST_SUITE_END() // mime_file
