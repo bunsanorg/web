@@ -15,7 +15,7 @@ namespace bunsan{namespace web
     {
         using std::swap;
 
-        swap(m_extension2mime, m.m_extension2mime);
+        swap(m_extension2mime_type, m.m_extension2mime_type);
     }
 
     namespace
@@ -109,37 +109,37 @@ namespace bunsan{namespace web
         swap(data);
     }
 
-    std::string mime_file::mime_by_extension(const std::string &extension) const
+    std::string mime_file::mime_type_by_extension(const std::string &extension) const
     {
-        const auto iter = m_extension2mime.find(norm_extension(extension));
-        if (iter == m_extension2mime.end())
-            return fallback_mime;
+        const auto iter = m_extension2mime_type.find(norm_extension(extension));
+        if (iter == m_extension2mime_type.end())
+            return fallback_mime_type;
         else
             return iter->second;
     }
 
-    std::string mime_file::mime_by_name(const boost::filesystem::path &name) const
+    std::string mime_file::mime_type_by_name(const boost::filesystem::path &name) const
     {
-        return mime_by_extension(name.extension().string());
+        return mime_type_by_extension(name.extension().string());
     }
 
-    void mime_file::set(const std::string &mime, const std::string &extension)
+    void mime_file::set(const std::string &mime_type, const std::string &extension)
     {
-        m_extension2mime[extension] = mime;
+        m_extension2mime_type[extension] = mime_type;
     }
 
-    void mime_file::put(const std::string &mime, const std::string &extension)
+    void mime_file::put(const std::string &mime_type, const std::string &extension)
     {
         const std::string ext = norm_extension(extension);
-        const auto iter = m_extension2mime.find(ext);
-        if (iter != m_extension2mime.end())
+        const auto iter = m_extension2mime_type.find(ext);
+        if (iter != m_extension2mime_type.end())
             BOOST_THROW_EXCEPTION(mime_file_extension_conflict_error() <<
-                                  mime_file_extension_conflict_error::mime(mime) <<
+                                  mime_file_extension_conflict_error::mime_type(mime_type) <<
                                   mime_file_extension_conflict_error::extension(ext));
-        m_extension2mime[extension] = mime;
+        m_extension2mime_type[extension] = mime_type;
     }
 
-    const std::string mime_file::fallback_mime = "application/octet-stream";
+    const std::string mime_file::fallback_mime_type = "application/octet-stream";
 
     std::string mime_file::norm_extension(const std::string &extension)
     {

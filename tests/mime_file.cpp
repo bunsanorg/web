@@ -15,19 +15,19 @@ BOOST_AUTO_TEST_CASE(basic)
     bw::mime_file m;
     m.put("mime1", "ext1", "ext2");
     m.put("mime2", "ext3");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("unknown"), "application/octet-stream");
-    BOOST_CHECK_EQUAL(m.mime_by_name("name.unknown"), "application/octet-stream");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime2");
-    BOOST_CHECK_EQUAL(m.mime_by_name("name.ext1"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_name("name.ext2"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_name("name.ext3"), "mime2");
-    BOOST_CHECK_EQUAL(m.mime_by_extension(".ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("unknown"), "application/octet-stream");
+    BOOST_CHECK_EQUAL(m.mime_type_by_name("name.unknown"), "application/octet-stream");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext3"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_name("name.ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_name("name.ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_name("name.ext3"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension(".ext1"), "mime1");
     m.set("mime3", "ext1", "ext3");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime3");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime3");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext1"), "mime3");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext3"), "mime3");
 }
 
 BOOST_AUTO_TEST_CASE(put_all)
@@ -37,10 +37,10 @@ BOOST_AUTO_TEST_CASE(put_all)
     std::vector<std::string> lst2 = {"ext3", "ext4"};
     m.put_all("mime1", lst1.begin(), lst1.end());
     m.put_all("mime2", lst2);
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime2");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext4"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext3"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext4"), "mime2");
 }
 
 BOOST_AUTO_TEST_CASE(mime_file_extension_conflict_error)
@@ -50,8 +50,8 @@ BOOST_AUTO_TEST_CASE(mime_file_extension_conflict_error)
     BOOST_CHECK_EXCEPTION(m.put("mime", "ext"), bw::mime_file_extension_conflict_error,
                           [](const bw::mime_file_extension_conflict_error &e)
                           {
-                              BOOST_REQUIRE(e.get<bw::mime_file_extension_conflict_error::mime>());
-                              BOOST_CHECK_EQUAL(*e.get<bw::mime_file_extension_conflict_error::mime>(), "mime");
+                              BOOST_REQUIRE(e.get<bw::mime_file_extension_conflict_error::mime_type>());
+                              BOOST_CHECK_EQUAL(*e.get<bw::mime_file_extension_conflict_error::mime_type>(), "mime");
                               BOOST_REQUIRE(e.get<bw::mime_file_extension_conflict_error::extension>());
                               BOOST_CHECK_EQUAL(*e.get<bw::mime_file_extension_conflict_error::extension>(), "ext");
                               return true;
@@ -70,12 +70,12 @@ BOOST_AUTO_TEST_CASE(load)
 )EOF");
     bw::mime_file m;
     m.load(sin);
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime2");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext4"), "mime2");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("conf"), "text/plain");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("txt"), "text/plain");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext3"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext4"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("conf"), "text/plain");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("txt"), "text/plain");
 }
 
 BOOST_AUTO_TEST_CASE(load_override)
@@ -86,9 +86,9 @@ BOOST_AUTO_TEST_CASE(load_override)
 )EOF");
     bw::mime_file m;
     m.load(sin);
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime1");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime2");
-    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext2"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_type_by_extension("ext2"), "mime2");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // mime_file
