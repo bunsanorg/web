@@ -18,6 +18,12 @@ namespace bunsan{namespace web
 
     struct mime_file_extension_conflict_error: virtual mime_file_error {};
 
+    struct mime_file_format_error: virtual mime_file_error
+    {
+        typedef boost::error_info<struct tag_row, std::size_t> row;
+        typedef boost::error_info<struct tag_column, std::size_t> column;
+    };
+
     class mime_file
     {
     public:
@@ -44,6 +50,19 @@ namespace bunsan{namespace web
         {
             put(mime, extension);
             put(mime, std::forward<Args>(args)...);
+        }
+
+        template <typename Iterable>
+        void put_all(const std::string &mime, const Iterable &iterable)
+        {
+            put_all(mime, begin(iterable), end(iterable));
+        }
+
+        template <typename Iter>
+        void put_all(const std::string &mime, Iter begin, const Iter &end)
+        {
+            for (; begin != end; ++begin)
+                put(mime, *begin);
         }
 
     private:
