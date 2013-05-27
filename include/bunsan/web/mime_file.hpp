@@ -38,6 +38,7 @@ namespace bunsan{namespace web
         void swap(mime_file &m) noexcept;
 
     public:
+        /// \note Uses set(), i.e. for multiple
         void load(std::istream &in);
         void load(const boost::filesystem::path &path);
 
@@ -46,6 +47,30 @@ namespace bunsan{namespace web
         std::string mime_by_extension(const std::string &extension) const;
         std::string mime_by_name(const boost::filesystem::path &name) const;
 
+        /// Creates new mapping extension -> mime or replaces old one.
+        void set(const std::string &mime, const std::string &extension);
+
+        template <typename ... Args>
+        void set(const std::string &mime, const std::string &extension, Args &&...args)
+        {
+            set(mime, extension);
+            set(mime, std::forward<Args>(args)...);
+        }
+
+        template <typename Iterable>
+        void set_all(const std::string &mime, const Iterable &iterable)
+        {
+            set_all(mime, begin(iterable), end(iterable));
+        }
+
+        template <typename Iter>
+        void set_all(const std::string &mime, Iter begin, const Iter &end)
+        {
+            for (; begin != end; ++begin)
+                set(mime, *begin);
+        }
+
+        /// \throws mime_file_extension_conflict_error if extension -> mime mapping is already present
         void put(const std::string &mime, const std::string &extension);
 
         template <typename ... Args>

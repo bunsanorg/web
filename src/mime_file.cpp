@@ -123,6 +123,11 @@ namespace bunsan{namespace web
         return mime_by_extension(name.extension().string());
     }
 
+    void mime_file::set(const std::string &mime, const std::string &extension)
+    {
+        m_extension2mime[extension] = mime;
+    }
+
     void mime_file::put(const std::string &mime, const std::string &extension)
     {
         const std::string ext = norm_extension(extension);

@@ -24,6 +24,10 @@ BOOST_AUTO_TEST_CASE(basic)
     BOOST_CHECK_EQUAL(m.mime_by_name("name.ext2"), "mime1");
     BOOST_CHECK_EQUAL(m.mime_by_name("name.ext3"), "mime2");
     BOOST_CHECK_EQUAL(m.mime_by_extension(".ext1"), "mime1");
+    m.set("mime3", "ext1", "ext3");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime3");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime3");
 }
 
 BOOST_AUTO_TEST_CASE(put_all)
