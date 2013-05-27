@@ -13,7 +13,7 @@ namespace bunsan{namespace web
 {
     struct mime_file_error: virtual error
     {
-        typedef boost::error_info<struct tag_mime, std::string> mime;
+        typedef boost::error_info<struct tag_mime_type, std::string> mime_type;
         typedef boost::error_info<struct tag_extension, std::string> extension;
     };
 
@@ -43,63 +43,63 @@ namespace bunsan{namespace web
         void load(const boost::filesystem::path &path);
 
     public:
-        /// \return mime type corresponding to extension or "application/octet-stream" as fallback
-        std::string mime_by_extension(const std::string &extension) const;
-        std::string mime_by_name(const boost::filesystem::path &name) const;
+        /// \return mime_type corresponding to extension or "application/octet-stream" as fallback
+        std::string mime_type_by_extension(const std::string &extension) const;
+        std::string mime_type_by_name(const boost::filesystem::path &name) const;
 
-        /// Creates new mapping extension -> mime or replaces old one.
-        void set(const std::string &mime, const std::string &extension);
+        /// Creates new mapping extension -> mime_type or replaces old one.
+        void set(const std::string &mime_type, const std::string &extension);
 
         template <typename ... Args>
-        void set(const std::string &mime, const std::string &extension, Args &&...args)
+        void set(const std::string &mime_type, const std::string &extension, Args &&...args)
         {
-            set(mime, extension);
-            set(mime, std::forward<Args>(args)...);
+            set(mime_type, extension);
+            set(mime_type, std::forward<Args>(args)...);
         }
 
         template <typename Iterable>
-        void set_all(const std::string &mime, const Iterable &iterable)
+        void set_all(const std::string &mime_type, const Iterable &iterable)
         {
-            set_all(mime, begin(iterable), end(iterable));
+            set_all(mime_type, begin(iterable), end(iterable));
         }
 
         template <typename Iter>
-        void set_all(const std::string &mime, Iter begin, const Iter &end)
+        void set_all(const std::string &mime_type, Iter begin, const Iter &end)
         {
             for (; begin != end; ++begin)
-                set(mime, *begin);
+                set(mime_type, *begin);
         }
 
-        /// \throws mime_file_extension_conflict_error if extension -> mime mapping is already present
-        void put(const std::string &mime, const std::string &extension);
+        /// \throws mime_file_extension_conflict_error if extension -> mime_type mapping is already present
+        void put(const std::string &mime_type, const std::string &extension);
 
         template <typename ... Args>
-        void put(const std::string &mime, const std::string &extension, Args &&...args)
+        void put(const std::string &mime_type, const std::string &extension, Args &&...args)
         {
-            put(mime, extension);
-            put(mime, std::forward<Args>(args)...);
+            put(mime_type, extension);
+            put(mime_type, std::forward<Args>(args)...);
         }
 
         template <typename Iterable>
-        void put_all(const std::string &mime, const Iterable &iterable)
+        void put_all(const std::string &mime_type, const Iterable &iterable)
         {
-            put_all(mime, begin(iterable), end(iterable));
+            put_all(mime_type, begin(iterable), end(iterable));
         }
 
         template <typename Iter>
-        void put_all(const std::string &mime, Iter begin, const Iter &end)
+        void put_all(const std::string &mime_type, Iter begin, const Iter &end)
         {
             for (; begin != end; ++begin)
-                put(mime, *begin);
+                put(mime_type, *begin);
         }
 
     private:
-        static const std::string fallback_mime;
+        static const std::string fallback_mime_type;
 
         static std::string norm_extension(const std::string &extension);
 
     private:
-        std::unordered_map<std::string, std::string> m_extension2mime;
+        std::unordered_map<std::string, std::string> m_extension2mime_type;
     };
     inline void swap(mime_file &a, mime_file &b) noexcept
     {
