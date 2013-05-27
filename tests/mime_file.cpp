@@ -3,6 +3,7 @@
 
 #include "bunsan/web/mime_file.hpp"
 
+#include <sstream>
 #include <vector>
 
 namespace bw = bunsan::web;
@@ -36,6 +37,26 @@ BOOST_AUTO_TEST_CASE(put_all)
     BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
     BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime2");
     BOOST_CHECK_EQUAL(m.mime_by_extension("ext4"), "mime2");
+}
+
+BOOST_AUTO_TEST_CASE(load)
+{
+    std::istringstream sin(R"EOF(
+        mime0
+        mime1 ext1 ext2
+        mime2 ext3 ext4 # comment
+# next line is empty
+
+        text/plain conf txt
+)EOF");
+    bw::mime_file m;
+    m.load(sin);
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext1"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext2"), "mime1");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext3"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("ext4"), "mime2");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("conf"), "text/plain");
+    BOOST_CHECK_EQUAL(m.mime_by_extension("txt"), "text/plain");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // mime_file

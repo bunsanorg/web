@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bunsan/web/error.hpp"
+#include "bunsan/filesystem/error.hpp"
 
 #include <boost/filesystem/path.hpp>
 
@@ -22,6 +23,7 @@ namespace bunsan{namespace web
     {
         typedef boost::error_info<struct tag_row, std::size_t> row;
         typedef boost::error_info<struct tag_column, std::size_t> column;
+        typedef filesystem::error::path path;
     };
 
     class mime_file
@@ -36,6 +38,7 @@ namespace bunsan{namespace web
         void swap(mime_file &m) noexcept;
 
     public:
+        void load(std::istream &in);
         void load(const boost::filesystem::path &path);
 
     public:
