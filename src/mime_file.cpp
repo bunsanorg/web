@@ -25,9 +25,9 @@ namespace bunsan{namespace web
             std::string mime_type;
             std::vector<std::string> extensions;
 
-            void put_into(mime_file &m) const
+            void setup(mime_file &m) const
             {
-                m.put_all(mime_type, extensions);
+                m.set_all(mime_type, extensions);
             }
         };
     }
@@ -83,7 +83,7 @@ namespace bunsan{namespace web
                 else
                 {
                     if (mime_exts)
-                        mime_exts->put_into(data);
+                        mime_exts->setup(data);
                     mime_exts.reset();
                 }
             }
