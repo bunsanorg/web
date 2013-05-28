@@ -11,7 +11,8 @@ bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 bunsan_use(cppcms)
 
 bunsan_add_shared_library(${PROJECT_NAME}
-    src/mime_file.cpp
+    src/mime/file.cpp
+    src/mime/map.cpp
 )
 
 bunsan_install_headers()

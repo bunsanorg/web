@@ -1,46 +1,27 @@
 #pragma once
 
-#include "bunsan/web/error.hpp"
-#include "bunsan/filesystem/error.hpp"
+#include "bunsan/web/mime/error.hpp"
 
 #include <boost/filesystem/path.hpp>
 
 #include <string>
 #include <unordered_map>
-#include <utility>
 
-namespace bunsan{namespace web
+namespace bunsan{namespace web{namespace mime
 {
-    struct mime_file_error: virtual error
-    {
-        typedef boost::error_info<struct tag_mime_type, std::string> mime_type;
-        typedef boost::error_info<struct tag_extension, std::string> extension;
-    };
+    struct map_error: virtual error {};
+    struct map_extension_conflict_error: virtual map_error {};
 
-    struct mime_file_extension_conflict_error: virtual mime_file_error {};
-
-    struct mime_file_format_error: virtual mime_file_error
-    {
-        typedef boost::error_info<struct tag_row, std::size_t> row;
-        typedef boost::error_info<struct tag_column, std::size_t> column;
-        typedef filesystem::error::path path;
-    };
-
-    class mime_file
+    class map
     {
     public:
-        mime_file()=default;
-        mime_file(const mime_file &)=default;
-        mime_file &operator=(const mime_file &)=default;
-        mime_file(mime_file &&)=default;
-        mime_file &operator=(mime_file &&)=default;
+        map()=default;
+        map(const map &)=default;
+        map &operator=(const map &)=default;
+        map(map &&)=default;
+        map &operator=(map &&)=default;
 
-        void swap(mime_file &m) noexcept;
-
-    public:
-        /// \note Uses set(), i.e. for multiple
-        void load(std::istream &in);
-        void load(const boost::filesystem::path &path);
+        void swap(map &m) noexcept;
 
     public:
         /// \return mime_type corresponding to extension or "application/octet-stream" as fallback
@@ -101,10 +82,8 @@ namespace bunsan{namespace web
     private:
         std::unordered_map<std::string, std::string> m_extension2mime_type;
     };
-    inline void swap(mime_file &a, mime_file &b) noexcept
+    inline void swap(map &a, map &b) noexcept
     {
         a.swap(b);
     }
-
-    mime_file load_mime_file(const boost::filesystem::path &path);
-}}
+}}}
