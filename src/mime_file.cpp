@@ -145,4 +145,11 @@ namespace bunsan{namespace web
     {
         return !extension.empty() && extension[0] == '.' ? extension.substr(1) : extension;
     }
+
+    mime_file load_mime_file(const boost::filesystem::path &path)
+    {
+        mime_file data;
+        data.load(path);
+        return data;
+    }
 }}
