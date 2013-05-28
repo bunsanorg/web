@@ -105,4 +105,6 @@ namespace bunsan{namespace web
     {
         a.swap(b);
     }
+
+    mime_file load_mime_file(const boost::filesystem::path &path);
 }}
