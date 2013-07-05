@@ -52,11 +52,11 @@ namespace bunsan{namespace web
         using namespace phoenix;
         typedef std::string::const_iterator iterator;
 
-        qi::rule<iterator, boost::optional<mime_file_line>(), qi::ascii::space_type> line_parser;
-        qi::rule<iterator, mime_file_line(), qi::ascii::space_type> data_parser;
-        qi::rule<iterator, void(), qi::ascii::space_type> comment_parser;
+        qi::rule<iterator, boost::optional<mime_file_line>(), qi::blank_type> line_parser;
+        qi::rule<iterator, mime_file_line(), qi::blank_type> data_parser;
+        qi::rule<iterator, void(), qi::blank_type> comment_parser;
         qi::rule<iterator, std::string()> mime_type_parser, extension_parser;
-        qi::rule<iterator, std::vector<std::string>(), qi::ascii::space_type> extension_list_parser;
+        qi::rule<iterator, std::vector<std::string>(), qi::blank_type> extension_list_parser;
 
         mime_type_parser = +(qi::graph - '#');
         extension_parser = +(qi::graph - '#');
@@ -73,7 +73,7 @@ namespace bunsan{namespace web
             ++lineno;
             iterator cur = line.begin();
             const iterator end = line.end();
-            if (qi::phrase_parse(cur, end, line_parser, qi::ascii::space, mime_exts))
+            if (qi::phrase_parse(cur, end, line_parser, qi::blank, mime_exts))
             {
                 if (cur != end)
                 {
