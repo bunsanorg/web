@@ -36,7 +36,8 @@ namespace bunsan{namespace web
 BOOST_FUSION_ADAPT_STRUCT(
     bunsan::web::mime_file_line,
     (std::string, mime_type)
-    (std::vector<std::string>, extensions));
+    (std::vector<std::string>, extensions)
+)
 
 namespace bunsan{namespace web
 {
