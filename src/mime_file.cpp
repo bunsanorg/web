@@ -41,30 +41,42 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 namespace bunsan{namespace web
 {
+    namespace qi = boost::spirit::qi;
+    namespace phoenix = boost::phoenix;
+    using namespace qi::labels;
+    using namespace phoenix;
+
+    namespace
+    {
+        template <typename Iterator>
+        struct mime_file_line_grammar: qi::grammar<Iterator, boost::optional<mime_file_line>()>
+        {
+            mime_file_line_grammar(): mime_file_line_grammar::base_type(line_parser)
+            {
+                mime_type_parser = +(qi::graph - '#');
+                extension_parser = +(qi::graph - '#');
+                comment_parser = qi::char_('#') >> *qi::char_;
+
+                extension_list_parser = *extension_parser;
+                data_parser = mime_type_parser >> extension_list_parser;
+                line_parser = -data_parser >> -comment_parser;
+            }
+
+            qi::rule<iterator, boost::optional<mime_file_line>(), qi::blank_type> line_parser;
+            qi::rule<iterator, mime_file_line(), qi::blank_type> data_parser;
+            qi::rule<iterator, void(), qi::blank_type> comment_parser;
+            qi::rule<iterator, std::string()> mime_type_parser, extension_parser;
+            qi::rule<iterator, std::vector<std::string>(), qi::blank_type> extension_list_parser;
+        };
+    }
+
     void mime_file::load(std::istream &in)
     {
         mime_file data;
         boost::optional<mime_file_line> mime_exts;
 
-        namespace qi = boost::spirit::qi;
-        namespace phoenix = boost::phoenix;
-        using namespace qi::labels;
-        using namespace phoenix;
         typedef std::string::const_iterator iterator;
-
-        qi::rule<iterator, boost::optional<mime_file_line>(), qi::blank_type> line_parser;
-        qi::rule<iterator, mime_file_line(), qi::blank_type> data_parser;
-        qi::rule<iterator, void(), qi::blank_type> comment_parser;
-        qi::rule<iterator, std::string()> mime_type_parser, extension_parser;
-        qi::rule<iterator, std::vector<std::string>(), qi::blank_type> extension_list_parser;
-
-        mime_type_parser = +(qi::graph - '#');
-        extension_parser = +(qi::graph - '#');
-        comment_parser = qi::char_('#') >> *qi::char_;
-
-        extension_list_parser = *extension_parser;
-        data_parser = mime_type_parser >> extension_list_parser;
-        line_parser = -data_parser >> -comment_parser;
+        mime_file_line_grammar<iterator> line_parser;
 
         std::string line;
         std::size_t lineno = 0;
