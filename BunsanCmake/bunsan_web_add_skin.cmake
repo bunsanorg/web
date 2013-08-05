@@ -1,5 +1,3 @@
-include(BunsanCommon)
-
 function(bunsan_web_add_skin target)
     set(srcs)
     foreach(src ${ARGN})
