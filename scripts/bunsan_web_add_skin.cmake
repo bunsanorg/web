@@ -11,4 +11,7 @@ function(bunsan_web_add_skin target)
             ${srcs}
         DEPENDS ${srcs})
     add_library(${target} SHARED ${cpp_target})
+
+    # bunsan project layout
+    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 endfunction()
