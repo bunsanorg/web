@@ -1,6 +1,5 @@
 #include <bunsan/web/mime_file.hpp>
 
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 
 #include <boost/assert.hpp>
@@ -50,13 +49,17 @@ namespace bunsan{namespace web
         namespace phoenix = boost::phoenix;
         using namespace qi::labels;
         using namespace phoenix;
-        typedef std::string::const_iterator iterator;
+        using iterator = std::string::const_iterator;
 
-        qi::rule<iterator, boost::optional<mime_file_line>(), qi::blank_type> line_parser;
+        qi::rule<iterator,
+                 boost::optional<mime_file_line>(),
+                 qi::blank_type> line_parser;
         qi::rule<iterator, mime_file_line(), qi::blank_type> data_parser;
         qi::rule<iterator, void(), qi::blank_type> comment_parser;
         qi::rule<iterator, std::string()> mime_type_parser, extension_parser;
-        qi::rule<iterator, std::vector<std::string>(), qi::blank_type> extension_list_parser;
+        qi::rule<iterator,
+                 std::vector<std::string>(),
+                 qi::blank_type> extension_list_parser;
 
         mime_type_parser = +(qi::graph - '#');
         extension_parser = +(qi::graph - '#');
@@ -77,9 +80,10 @@ namespace bunsan{namespace web
             {
                 if (cur != end)
                 {
-                    BOOST_THROW_EXCEPTION(mime_file_format_error() <<
-                                          mime_file_format_error::row(lineno) <<
-                                          mime_file_format_error::column(1 + (cur - line.begin())));
+                    BOOST_THROW_EXCEPTION(
+                        mime_file_format_error() <<
+                        mime_file_format_error::row(lineno) <<
+                        mime_file_format_error::column(1 + (cur - line.begin())));
                 }
                 else
                 {
@@ -100,17 +104,18 @@ namespace bunsan{namespace web
     void mime_file::load(const boost::filesystem::path &path)
     {
         mime_file data;
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ifstream fin(path);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
         {
-            bunsan::filesystem::ifstream fin(path);
             data.load(fin);
-            fin.close();
         }
-        BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(bunsan::filesystem::error::path(path))
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+        fin.close();
         swap(data);
     }
 
-    std::string mime_file::mime_type_by_extension(const std::string &extension) const
+    std::string mime_file::mime_type_by_extension(
+        const std::string &extension) const
     {
         const auto iter = m_extension2mime_type.find(norm_extension(extension));
         if (iter == m_extension2mime_type.end())
@@ -119,7 +124,8 @@ namespace bunsan{namespace web
             return iter->second;
     }
 
-    std::string mime_file::mime_type_by_name(const boost::filesystem::path &name) const
+    std::string mime_file::mime_type_by_name(
+        const boost::filesystem::path &name) const
     {
         return mime_type_by_extension(name.extension().string());
     }
@@ -134,9 +140,10 @@ namespace bunsan{namespace web
         const std::string ext = norm_extension(extension);
         const auto iter = m_extension2mime_type.find(ext);
         if (iter != m_extension2mime_type.end())
-            BOOST_THROW_EXCEPTION(mime_file_extension_conflict_error() <<
-                                  mime_file_extension_conflict_error::mime_type(mime_type) <<
-                                  mime_file_extension_conflict_error::extension(ext));
+            BOOST_THROW_EXCEPTION(
+                mime_file_extension_conflict_error() <<
+                mime_file_extension_conflict_error::mime_type(mime_type) <<
+                mime_file_extension_conflict_error::extension(ext));
         m_extension2mime_type[extension] = mime_type;
     }
 
@@ -144,7 +151,8 @@ namespace bunsan{namespace web
 
     std::string mime_file::norm_extension(const std::string &extension)
     {
-        return !extension.empty() && extension[0] == '.' ? extension.substr(1) : extension;
+        return !extension.empty() &&
+               extension[0] == '.' ? extension.substr(1) : extension;
     }
 
     mime_file load_mime_file(const boost::filesystem::path &path)

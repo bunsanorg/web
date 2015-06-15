@@ -14,17 +14,17 @@ namespace bunsan{namespace web
 {
     struct mime_file_error: virtual error
     {
-        typedef boost::error_info<struct tag_mime_type, std::string> mime_type;
-        typedef boost::error_info<struct tag_extension, std::string> extension;
+        using mime_type = boost::error_info<struct tag_mime_type, std::string>;
+        using extension = boost::error_info<struct tag_extension, std::string>;
     };
 
     struct mime_file_extension_conflict_error: virtual mime_file_error {};
 
     struct mime_file_format_error: virtual mime_file_error
     {
-        typedef boost::error_info<struct tag_row, std::size_t> row;
-        typedef boost::error_info<struct tag_column, std::size_t> column;
-        typedef filesystem::error::path path;
+        using row = boost::error_info<struct tag_row, std::size_t>;
+        using column = boost::error_info<struct tag_column, std::size_t>;
+        using path = filesystem::error::path;
     };
 
     class mime_file
@@ -44,7 +44,8 @@ namespace bunsan{namespace web
         void load(const boost::filesystem::path &path);
 
     public:
-        /// \return mime_type corresponding to extension or "application/octet-stream" as fallback
+        /// \return mime_type corresponding to extension or
+        /// "application/octet-stream" as fallback
         std::string mime_type_by_extension(const std::string &extension) const;
         std::string mime_type_by_name(const boost::filesystem::path &name) const;
 
@@ -52,7 +53,9 @@ namespace bunsan{namespace web
         void set(const std::string &mime_type, const std::string &extension);
 
         template <typename ... Args>
-        void set(const std::string &mime_type, const std::string &extension, Args &&...args)
+        void set(const std::string &mime_type,
+                 const std::string &extension,
+                 Args &&...args)
         {
             set(mime_type, extension);
             set(mime_type, std::forward<Args>(args)...);
@@ -71,11 +74,14 @@ namespace bunsan{namespace web
                 set(mime_type, *begin);
         }
 
-        /// \throws mime_file_extension_conflict_error if extension -> mime_type mapping is already present
+        /// \throws mime_file_extension_conflict_error
+        /// if extension -> mime_type mapping is already present
         void put(const std::string &mime_type, const std::string &extension);
 
         template <typename ... Args>
-        void put(const std::string &mime_type, const std::string &extension, Args &&...args)
+        void put(const std::string &mime_type,
+                 const std::string &extension,
+                 Args &&...args)
         {
             put(mime_type, extension);
             put(mime_type, std::forward<Args>(args)...);
@@ -88,7 +94,8 @@ namespace bunsan{namespace web
         }
 
         template <typename Iter>
-        void put_all(const std::string &mime_type, Iter begin, const Iter &end)
+        void put_all(const std::string &mime_type,
+                     Iter begin, const Iter &end)
         {
             for (; begin != end; ++begin)
                 put(mime_type, *begin);
