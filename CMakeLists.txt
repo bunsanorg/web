@@ -10,15 +10,18 @@ else()
     find_package(BunsanCMake CONFIG REQUIRED)
 endif()
 
+bunsan_install_module(NAME BunsanWeb
+                      DIRECTORIES scripts/)
+BunsanWebLoad()
+
 bunsan_add_library(${PROJECT_NAME}
     src/mime_file.cpp
 )
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_common bunsan_common)
+bunsan_use_target(${PROJECT_NAME} cppcms)
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME})
-bunsan_install_module(NAME BunsanWeb
-                      DIRECTORIES scripts/)
 bunsan_install_project()
 
 bunsan_include_tests()
