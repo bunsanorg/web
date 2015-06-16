@@ -15,6 +15,7 @@ bunsan_install_module(NAME BunsanWeb
 BunsanWebLoad()
 
 bunsan_add_library(${PROJECT_NAME}
+    src/json.cpp
     src/mime_file.cpp
 )
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_common bunsan_common)
