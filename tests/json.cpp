@@ -3,14 +3,14 @@
 
 #include <bunsan/web/json.hpp>
 
-#include <bunsan/testing/filesystem/tempfile.hpp>
-#include <bunsan/testing/filesystem/write_data.hpp>
+#include <bunsan/test/filesystem/tempfile.hpp>
+#include <bunsan/test/filesystem/write_data.hpp>
 
-BOOST_FIXTURE_TEST_SUITE(json, bunsan::testing::filesystem::tempfile)
+BOOST_FIXTURE_TEST_SUITE(json, bunsan::test::filesystem::tempfile)
 
 BOOST_AUTO_TEST_CASE(load_file)
 {
-    bunsan::testing::filesystem::write_data(path, "{ \"hello\" : \"world\" }");
+    bunsan::test::filesystem::write_data(path, "{ \"hello\" : \"world\" }");
     const cppcms::json::value value = bunsan::web::json::load_file(path);
     cppcms::json::value expected;
     expected["hello"] = "world";
