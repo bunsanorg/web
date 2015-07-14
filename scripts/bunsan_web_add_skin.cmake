@@ -27,5 +27,6 @@ function(bunsan_web_install_skins)
 endfunction()
 
 function(bunsan_web_install_static)
-    install(DIRECTORY static DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
+    install(DIRECTORY static
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
 endfunction()
