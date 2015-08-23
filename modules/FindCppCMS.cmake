@@ -1,9 +1,24 @@
-macro(bunsan_web_find_cppcms_tmpl_cc)
-    find_program(CPPCMS_TMPL_CC cppcms_tmpl_cc)
-endmacro()
+find_package(Booster REQUIRED)
+
+find_path(CPPCMS_INCLUDE_DIR cppcms/config.h)
+find_library(CPPCMS_LIBRARY cppcms)
+find_program(CPPCMS_TMPL_CC cppcms_tmpl_cc)
+
+if(CPPCMS_INCLUDE_DIR AND CPPCMS_LIBRARY AND CPPCMS_TMPL_CC)
+    set(CppCMS_INCLUDE_DIRS ${CPPCMS_INCLUDE_DIR} ${Booster_INCLUDE_DIRS})
+    set(CppCMS_LIBRARIES ${CPPCMS_LIBRARY} ${Booster_LIBRARIES})
+    set(CppCMS_TMPL_CC ${CPPCMS_TMPL_CC})
+endif()
+
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CppCMS
+    REQUIRED_VARS
+        CppCMS_TMPL_CC
+        CppCMS_INCLUDE_DIRS
+        CppCMS_LIBRARIES
+)
 
 function(bunsan_web_add_skin target skin)
-    bunsan_web_find_cppcms_tmpl_cc()
     set(srcs)
     foreach(src ${ARGN})
         list(APPEND srcs ${CMAKE_CURRENT_SOURCE_DIR}/${src})
@@ -11,7 +26,7 @@ function(bunsan_web_add_skin target skin)
     set(cpp_target ${CMAKE_CURRENT_BINARY_DIR}/${target}_skin_cpp.cpp)
     add_custom_command(
         OUTPUT ${cpp_target}
-        COMMAND ${CPPCMS_TMPL_CC}
+        COMMAND ${CppCMS_TMPL_CC}
             -o ${cpp_target}
             ${srcs}
         DEPENDS ${srcs})

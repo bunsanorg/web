@@ -11,7 +11,7 @@ else()
 endif()
 
 bunsan_install_module(NAME BunsanWeb
-                      DIRECTORIES scripts/)
+                      INCLUDES modules)
 BunsanWebLoad()
 
 bunsan_add_library(${PROJECT_NAME}
@@ -19,7 +19,7 @@ bunsan_add_library(${PROJECT_NAME}
     src/mime_file.cpp
 )
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_common bunsan_common)
-bunsan_use_target(${PROJECT_NAME} cppcms)
+bunsan_use_package(${PROJECT_NAME} CppCMS)
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME})
